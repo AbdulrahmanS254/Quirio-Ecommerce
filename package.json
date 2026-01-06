@@ -10,18 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@fontsource-variable/cinzel": "^5.2.8",
     "@fontsource-variable/dm-sans": "^5.2.8",
-    "@fontsource-variable/source-serif-4": "^5.2.9",
-    "@fontsource/poppins": "^5.2.7",
-    "@fontsource/source-sans-pro": "^5.2.5",
-    "@mui/icons-material": "^7.3.6",
-    "@mui/material": "^7.3.6",
+    "@fontsource-variable/montserrat": "^5.2.8",
     "@tailwindcss/vite": "^4.1.18",
+    "motion": "^12.24.5",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-icons": "^5.5.0",
     "react-router": "^7.11.0"
   },
   "devDependencies": {

@@ -4,8 +4,8 @@ import App from "./App.jsx";
 
 // Supports weights 100-900
 import "@fontsource-variable/dm-sans";
-// Supports weights 400-900
-import "@fontsource-variable/cinzel";
+// Supports weights 100-900
+import '@fontsource-variable/montserrat';
 
 import { createBrowserRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
