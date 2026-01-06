@@ -1,65 +1,48 @@
-# 💎 Quartz Store
+# 💎 Quirio Store (🚧 Work in Progress)
 
-> **A Modern Product Management App built with React & Redux Toolkit.**
+> **Current Status:** 🎨 Building UI & Component Structure.
+> **Next Step:** Implementing Redux Logic & API Integration.
 
-**Quartz** is a dynamic single-page application (SPA) designed to simulate a real-world e-commerce dashboard. The primary focus of this project is to implement a robust **Global State Management** architecture using Redux Toolkit, wrapped in a clean, responsive UI powered by Tailwind CSS.
+**Quirio** is a modern e-commerce dashboard currently under active development. The goal of this project is to build a scalable Single-Page Application (SPA) that demonstrates advanced proficiency in **React Architecture**, **Redux Toolkit**, and **Tailwind CSS v4**.
 
 ---
 
-## 🎯 Project Focus & Learning Goals
+## 🎯 Project Roadmap
 
-This project serves as a practical implementation of advanced Front-End concepts:
+This project is being built in phases:
 
-* **State Management:** Moving away from "Prop Drilling" to a centralized **Redux Store** for managing Cart and Product data.
-* **Modern Styling:** Utilizing **Tailwind CSS v4** for a utility-first, responsive design approach.
-* **Routing:** implementing **React Router v6** for seamless client-side navigation.
-* **Clean Architecture:** Separating Logic (Slices/Reducers) from UI (Components).
+- [x] **Phase 1: UI/UX & Layout** (Current Focus)
+    - Designing responsive components (Navbar, Sidebar, Hero).
+    - Setting up **Tailwind CSS v4**.
+    - Implementing **Framer Motion** animations.
+- [ ] **Phase 2: Routing & Architecture**
+    - Configuring React Router v6.
+    - Creating Protected Routes for Admin access.
+- [ ] **Phase 3: State Management (The Core)**
+    - Setting up **Redux Toolkit** for global state.
+    - Building Cart logic (Add/Remove/Calculate).
+    - Connecting to DummyJSON API for Auth & Products.
 
 ## 🛠️ Tech Stack
 
-* **Framework:** [React.js](https://reactjs.org/) (Vite)
-* **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
-* **State Management:** Redux Toolkit (RTK) & React-Redux
+* **Core:** React.js (Vite)
+* **Styling:** Tailwind CSS v4 & Framer Motion
+* **State:** Redux Toolkit (Planned)
 * **Routing:** React Router DOM
-* **Icons:** React Icons / Phosphor Icons
+* **Icons:** React Icons
 
-## ✨ Key Features
+## 📂 Current Structure
 
-### 🛒 Consumer Side
-* **Product Browse:** Display available products in a responsive grid layout.
-* **Smart Cart:** Add/Remove items with real-time updates to the cart counter and total price.
-* **Favorites:** Mark items as favorites (persisted state).
-
-### ⚙️ Admin Side
-* **Dashboard View:** A centralized view to manage inventory.
-* **Create Product:** A dynamic form to add new items to the global store.
-* **Edit/Delete:** Full control over existing products.
-
-## 🚀 Getting Started
-
-Follow these steps to run the project locally:
-
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/your-username/quartz-store.git](https://github.com/your-username/quartz-store.git)
-    ```
-
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-
-3.  **Start the development server:**
-    ```bash
-    npm run dev
-    ```
-
-## 📂 Project Structure
+The project follows a **Feature-First** architecture (Co-location):
 
 ```bash
 src/
-├── app/             # Redux Store configuration
-├── components/      # Reusable UI components (Navbar, Cards, Buttons)
-├── features/        # Redux Slices (cartSlice, productsSlice)
-├── pages/           # Application Views (Home, Admin, Create)
-└── App.jsx          # Main Entry with Routing
+├── components/          
+│   ├── layout/          # Layout (Navbar, Footer)
+│   ├── ui/              # Shared UI (buttons, cards, ...)
+│   └── ...
+├── pages/               # Application Pages
+│   ├── Home/            # Home page & its specific components
+│   ├── Admin/           # Admin dashboard views
+│   └── ...
+└── App.jsx              # Main Entry
