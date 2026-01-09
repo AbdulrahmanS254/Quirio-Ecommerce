@@ -1,6 +1,6 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
+import App from "./app/App.jsx";
 
 // Supports weights 100-900 [Main Text font]
 import "@fontsource-variable/dm-sans";
