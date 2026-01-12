@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import MobileSidebar from "./MobileSidebar";
+import { navVariants } from "../../../motion/animation";
 
 import { NavLink } from "react-router";
 import { LuShoppingCart } from "react-icons/lu";
@@ -11,16 +12,6 @@ const linkClass =
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
-
-    // Animation Variants
-    const navVariants = {
-        hidden: { opacity: 0, x: -20 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: { duration: 0.6, ease: "easeOut" },
-        },
-    };
 
     return (
         <>

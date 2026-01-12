@@ -1,5 +1,9 @@
 import { motion } from "motion/react";
 import {
+    brandsContainerVariants,
+    itemVariants,
+} from "../../../motion/animation";
+import {
     SiNike,
     SiAdidas,
     SiPuma,
@@ -18,33 +22,13 @@ const brandsData = [
     { id: 6, name: "Under Armour", icon: <SiUnderarmour /> },
 ];
 
-// Animation Variants
-const containerVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-        opacity: 1,
-        scale: 1,
-        transition: {
-            duration: 0.6,
-            ease: "easeOut",
-            when: "beforeChildren",
-            staggerChildren: 0.1,
-        },
-    },
-};
-
-const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-};
-
 export default function Brands() {
     return (
         <section className="mb-14">
             <div className="container">
                 {/* 3. The Grey Box Container */}
                 <motion.div
-                    variants={containerVariants}
+                    variants={brandsContainerVariants}
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "-50px" }}

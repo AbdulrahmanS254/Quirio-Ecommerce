@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { motion } from "framer-motion";
+import { footerVariants } from "../../../motion/animation";
 import {
     FaFacebookF,
     FaTwitter,
@@ -8,16 +9,6 @@ import {
 } from "react-icons/fa";
 
 export default function Footer() {
-    // Animation Variants
-    const footerVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: { duration: 0.6, ease: "easeOut" },
-        },
-    };
-
     return (
         <footer className="bg-stone-950 text-stone-300 border-t border-stone-800 pt-16 pb-8">
             <div className="container">

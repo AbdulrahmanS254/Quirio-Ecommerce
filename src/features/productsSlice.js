@@ -5,7 +5,7 @@ export const fetchProducts = createAsyncThunk(
     "product/fetchProducts",
     async (_, thunkAPI) => {
         try {
-            const response = await axios.get("https://dummyjson.com/products");
+            const response = await axios.get(`https://dummyjson.com/products?limit=${12}&skip=${12}`);
             return response.data.products;
         } catch (err) {
             return rejectWithValue(err.response.data);
@@ -17,6 +17,7 @@ const initialState = {
     items: [],
     status: "idle",
     error: null,
+    currentPage: 0,
 };
 
 const productsSlice = createSlice({
