@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { LuSettings2, LuChevronDown } from "react-icons/lu";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchProducts } from "../../features/productsSlice";
+import Loading from "../../components/layout/Loading";
+import ErrorDisplay from "../../components/layout/ErrorDisplay";
+import { LuSettings2 } from "react-icons/lu";
 import FilterSideBar from "./components/FilterSideBar";
 import ProductCard from "../../components/ui/ProductCard";
 
@@ -31,7 +35,25 @@ const cardAnim = {
 
 export default function Products() {
     const [activeCategory, setActiveCategory] = useState("All Products");
-    const [showFilters, setShowFilters] = useState(false); // For phones & small screens
+    const [showFilters, setShowFilters] = useState(false);
+
+    const dispatch = useDispatch();
+    const { items, status, error } = useSelector((state) => state.products);
+
+    useEffect(() => {
+        if (status === "idle") {
+            dispatch(fetchProducts());
+        }
+    }, [status, dispatch]);
+
+    if (status === "failed")
+        return (
+            <ErrorDisplay
+                message={error}
+                onRetry={() => dispatch(fetchProducts())}
+            />
+        );
+    if (status === "pending") return <Loading />;
 
     return (
         <div className="min-h-screen bg-white pt-10 pb-20">
@@ -53,19 +75,18 @@ export default function Products() {
                         >
                             <LuSettings2 /> Filters
                         </button>
-
-                        <div className="relative flex-1 md:w-48">
-                            <button className="w-full flex items-center justify-between border border-stone-200 px-4 py-2 rounded-lg text-stone-600 hover:border-orange-500 transition-colors">
-                                <span>Sort by: Newest</span>
-                                <LuChevronDown />
-                            </button>
-                        </div>
                     </div>
                 </div>
 
                 <div className="flex gap-10 items-start">
                     {/* 2. Sidebar Filters (Sticky on Desktop) */}
-                    <FilterSideBar categories={categories} activeCategory={activeCategory} showFilters={showFilters} setShowFilters={setShowFilters} setActiveCategory={setActiveCategory} />
+                    <FilterSideBar
+                        categories={categories}
+                        activeCategory={activeCategory}
+                        showFilters={showFilters}
+                        setShowFilters={setShowFilters}
+                        setActiveCategory={setActiveCategory}
+                    />
 
                     {/* Overlay for Mobile Sidebar */}
                     {showFilters && (
@@ -82,9 +103,15 @@ export default function Products() {
                         animate="visible"
                         className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
-                        {Array.from({ length: 9 }).map((_, index) => (
-                            <motion.div key={index} variants={cardAnim}>
-                                <ProductCard />
+                        {items.map((product) => (
+                            <motion.div key={product.id} variants={cardAnim}>
+                                <ProductCard
+                                    id={product.id}
+                                    title={product.title}
+                                    thumb={product.thumbnail}
+                                    desc={product.description}
+                                    price={product.price}
+                                />
                             </motion.div>
                         ))}
                     </motion.main>
