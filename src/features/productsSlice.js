@@ -1,12 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const limit = 12;
+
 export const fetchProducts = createAsyncThunk(
     "product/fetchProducts",
-    async (_, thunkAPI) => {
+    async (page, thunkAPI) => {
+
+        const skip = (page - 1) * limit;
         try {
-            const response = await axios.get(`https://dummyjson.com/products?limit=${12}&skip=${12}`);
-            return response.data.products;
+            const response = await axios.get(`https://dummyjson.com/products?limit=${limit}&skip=${skip}`);
+            return response.data;
         } catch (err) {
             return rejectWithValue(err.response.data);
         }
@@ -17,7 +21,7 @@ const initialState = {
     items: [],
     status: "idle",
     error: null,
-    currentPage: 0,
+    total: 0,
 };
 
 const productsSlice = createSlice({
@@ -31,7 +35,8 @@ const productsSlice = createSlice({
         builder.addCase(fetchProducts.fulfilled, (state, action) => {
             state.status = "succeeded";
             // response.data.products = action.payload
-            state.items = action.payload;
+            state.items = action.payload.products;
+            state.total = action.payload.total;
         });
         builder.addCase(fetchProducts.rejected, (state, action) => {
             state.status = "failed";

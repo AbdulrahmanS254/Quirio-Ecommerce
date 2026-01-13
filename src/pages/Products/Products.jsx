@@ -8,6 +8,7 @@ import { LuSettings2 } from "react-icons/lu";
 import FilterSideBar from "./components/FilterSideBar";
 import ProductCard from "../../components/ui/ProductCard";
 import { containerVariants, cardAnim } from "../../motion/animation";
+import Pagination from "../../components/ui/Pagination";
 
 // Categories Data
 const categories = [
@@ -23,22 +24,19 @@ export default function Products() {
     const [activeCategory, setActiveCategory] = useState("All Products");
     const [showFilters, setShowFilters] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 12;
 
     const dispatch = useDispatch();
-    const { items, status, error } = useSelector((state) => state.products);
+    const { items, status, error, total } = useSelector(
+        (state) => state.products
+    );
 
     // Calculate pagination
-    const totalPages = Math.ceil(items.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = items.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(total / 12);
 
     useEffect(() => {
-        if (status === "idle") {
-            dispatch(fetchProducts());
-        }
-    }, [status, dispatch]);
+            dispatch(fetchProducts(currentPage));
+            window.scroll({top: 0, behavior: "smooth"})
+    }, [dispatch, currentPage]);
 
     if (status === "failed")
         return (
@@ -59,8 +57,7 @@ export default function Products() {
                             Collection
                         </h1>
                         <p className="text-stone-500">
-                            Showing {paginatedItems.length} of {items.length}{" "}
-                            results
+                            Showing {items.length} of {items.length} results
                         </p>
                     </div>
 
@@ -100,7 +97,7 @@ export default function Products() {
                         animate="visible"
                         className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                     >
-                        {paginatedItems.map((product) => (
+                        {items.map((product) => (
                             <motion.div key={product.id} variants={cardAnim}>
                                 <ProductCard
                                     id={product.id}
@@ -115,50 +112,11 @@ export default function Products() {
                 </div>
 
                 {/* Pagination Controls */}
-                {totalPages > 1 && (
-                    <div className="flex justify-center items-center gap-2 mt-12">
-                        <button
-                            onClick={() =>
-                                setCurrentPage(Math.max(1, currentPage - 1))
-                            }
-                            disabled={currentPage === 1}
-                            className="px-4 py-2 border border-stone-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-stone-100 transition"
-                        >
-                            Previous
-                        </button>
-
-                        <div className="flex gap-2">
-                            {Array.from(
-                                { length: totalPages },
-                                (_, i) => i + 1
-                            ).map((page) => (
-                                <button
-                                    key={page}
-                                    onClick={() => setCurrentPage(page)}
-                                    className={`px-3 py-2 rounded-lg transition ${
-                                        currentPage === page
-                                            ? "bg-black text-white"
-                                            : "border border-stone-200 hover:bg-stone-100"
-                                    }`}
-                                >
-                                    {page}
-                                </button>
-                            ))}
-                        </div>
-
-                        <button
-                            onClick={() =>
-                                setCurrentPage(
-                                    Math.min(totalPages, currentPage + 1)
-                                )
-                            }
-                            disabled={currentPage === totalPages}
-                            className="px-4 py-2 border border-stone-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-stone-100 transition"
-                        >
-                            Next
-                        </button>
-                    </div>
-                )}
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
             </div>
         </div>
     );
