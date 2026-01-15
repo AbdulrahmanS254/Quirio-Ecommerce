@@ -34,8 +34,8 @@ export default function Products() {
     const totalPages = Math.ceil(total / 12);
 
     useEffect(() => {
-            dispatch(fetchProducts(currentPage));
-            window.scroll({top: 0, behavior: "smooth"})
+        dispatch(fetchProducts(currentPage));
+        window.scroll({ top: 0, behavior: "smooth" });
     }, [dispatch, currentPage]);
 
     if (status === "failed")

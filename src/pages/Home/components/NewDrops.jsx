@@ -1,6 +1,10 @@
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { motion } from "motion/react";
+import { fetchProducts } from "../../../features/productsSlice";
 import ProductCard from "../../../components/ui/ProductCard";
 
+// Animation Variants
 const titleVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: {
@@ -17,8 +21,19 @@ const cardsVariants = {
         transition: { duration: 0.5, ease: "easeOut" },
     },
 };
+const randomNumber = Math.floor(Math.random() * 10);
 
 export default function NewDrops() {
+    // Fetching products
+    const { items } = useSelector((state) => state.products);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(fetchProducts(randomNumber));
+    }, [dispatch]);
+
+    const displayItems = items ? items.slice(0, 4) : [];
+
     return (
         <section id="new-drops" className="my-14">
             <div className="container">
@@ -43,10 +58,16 @@ export default function NewDrops() {
                     variants={cardsVariants}
                     className="cards-wrapper grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 my-12"
                 >
-                    <ProductCard></ProductCard>
-                    <ProductCard></ProductCard>
-                    <ProductCard></ProductCard>
-                    <ProductCard></ProductCard>
+                    {displayItems.map((item) => (
+                        <ProductCard
+                            key={item.id}
+                            id={item.id}
+                            title={item.title}
+                            thumb={item.thumbnail}
+                            desc={item.description}
+                            price={item.price}
+                        />
+                    ))}
                 </motion.div>
             </div>
         </section>

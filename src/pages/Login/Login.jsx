@@ -32,15 +32,15 @@ export default function Login() {
     return (
         <div className="min-h-screen flex bg-white">
             {/* 1. Left Side: Visual Branding (Hidden on mobile) */}
-            <div className="hidden lg:flex w-1/2 relative bg-stone-900 overflow-hidden">
+            <div className="hidden lg:flex w-1/2 relative bg-stone-950 overflow-hidden">
                 <img
-                    src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=1000&auto=format&fit=crop"
-                    className="absolute inset-0 w-full h-full object-cover opacity-60"
+                    src="https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    className="absolute inset-0 w-full h-full object-cover opacity-50"
                     alt="Fashion Model"
                 />
                 <div className="relative z-10 m-auto text-center px-10">
-                    <h1 className="text-6xl font-bold text-white mb-4">
-                        QUIRIO.
+                    <h1 className="text-6xl font-bold text-white mb-4 brand">
+                        <span className="text-orange-500">Q</span>uirio.
                     </h1>
                     <p className="text-stone-300 text-lg tracking-wide">
                         Join the community. Experience the new era of
