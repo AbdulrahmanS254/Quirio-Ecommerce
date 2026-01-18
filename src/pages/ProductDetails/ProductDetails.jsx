@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams, Link } from "react-router";
 import { motion } from "motion/react";
 import {
@@ -9,58 +10,72 @@ import {
     LuHeart,
     LuTruck,
     LuShieldCheck,
-    LuShare2,
 } from "react-icons/lu";
 
-// Mock Data (Simulating a single product fetch)
-const productData = {
-    id: 1,
-    title: "Shadow Drip Heavyweight Hoodie",
-    price: 99.0,
-    oldPrice: 120.0,
-    rating: 4.8,
-    reviews: 124,
-    description:
-        "Crafted for the modern urban explorer. This heavyweight hoodie features a relaxed fit, drop shoulders, and our signature premium cotton blend. Perfect for layering or standing out on its own.",
-    colors: [
-        { name: "Obsidian Black", code: "#1c1917" },
-        { name: "Concrete Grey", code: "#57534e" },
-        { name: "Burnt Orange", code: "#f97316" },
-    ],
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    images: [
-        "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1620799140408-ed5341cd2431?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1620799140187-5b603146744c?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1609505848912-b7c3b8b4beda?q=80&w=1000&auto=format&fit=crop",
-    ],
-};
+// Import actions
+import {
+    fetchProductById,
+    clearSingleProduct,
+} from "../../features/productsSlice";
+import Loading from "../../components/layout/Loading";
+import ErrorDisplay from "../../components/layout/ErrorDisplay";
 
-// Animation Variants
+// Constants for static data not provided by API
+
 const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
 export default function ProductDetails() {
-    const { id } = useParams(); // Retrieves the ID from URL (e.g., /products/1)
+    const { id } = useParams();
+    const dispatch = useDispatch();
+
+    const { singleItem, itemStatus, itemError } = useSelector(
+        (state) => state.products
+    );
 
     // Local State
-    const [activeImage, setActiveImage] = useState(productData.images[0]);
-    const [selectedColor, setSelectedColor] = useState(productData.colors[0]);
-    const [selectedSize, setSelectedSize] = useState("M");
+    const [activeImage, setActiveImage] = useState("");
     const [quantity, setQuantity] = useState(1);
 
-    // Reset active image when product changes (future proofing)
+    // Fetch Logic & Cleanup
     useEffect(() => {
+        dispatch(fetchProductById(id));
         window.scrollTo(0, 0);
-    }, [id]);
+
+        // Cleanup: Clear previous product data when leaving
+        return () => {
+            dispatch(clearSingleProduct());
+        };
+    }, [dispatch, id]);
+
+    // Sync active image when data arrives
+    useEffect(() => {
+        if (singleItem?.images?.length > 0) {
+            setActiveImage(singleItem.images[0]);
+        }
+    }, [singleItem]);
+
+    // Handling States
+    if (itemStatus === "pending") return <Loading />;
+
+    if (itemStatus === "failed")
+        return (
+            <ErrorDisplay
+                message={itemError}
+                onRetry={() => dispatch(fetchProductById(id))}
+            />
+        );
+
+    // Guard clause if data is missing
+    if (!singleItem) return null;
 
     return (
         <section className="min-h-screen bg-white py-10 pb-20">
             <div className="container">
                 {/* 1. Breadcrumbs */}
-                <nav className="flex items-center gap-2 text-sm text-stone-500 mb-8">
+                <nav className="flex items-center gap-2 text-sm text-stone-500 mb-8 overflow-hidden">
                     <Link
                         to="/"
                         className="hover:text-stone-900 transition-colors"
@@ -76,7 +91,7 @@ export default function ProductDetails() {
                     </Link>
                     <span>/</span>
                     <span className="text-stone-900 font-medium truncate">
-                        {productData.title}
+                        {singleItem.title}
                     </span>
                 </nav>
 
@@ -89,37 +104,39 @@ export default function ProductDetails() {
                         className="flex flex-col gap-4"
                     >
                         {/* Main Image */}
-                        <div className="md:w-1/2 mx-auto lg:w-full h-150 sm:h-125 lg:h-150 bg-gray-100 rounded-3xl overflow-hidden cursor-zoom-in">
+                        <div className="md:w-1/2 mx-auto lg:w-full h-96 sm:h-125 lg:h-125 bg-gray-50 rounded-3xl overflow-hidden border border-stone-100">
                             <motion.img
-                                key={activeImage} // Triggers animation on change
+                                key={activeImage}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}
-                                src={activeImage}
-                                alt={productData.title}
-                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                                src={activeImage || singleItem.thumbnail}
+                                alt={singleItem.title}
+                                className="w-full h-full object-contain p-4 hover:scale-105 transition-transform duration-700"
                             />
                         </div>
 
                         {/* Thumbnails */}
                         <div className="grid grid-cols-4 gap-4">
-                            {productData.images.map((img, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setActiveImage(img)}
-                                    className={`aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-                                        activeImage === img
-                                            ? "border-stone-900 opacity-100"
-                                            : "border-transparent opacity-70 hover:opacity-100"
-                                    }`}
-                                >
-                                    <img
-                                        src={img}
-                                        alt="Thumbnail"
-                                        className="w-full h-full object-cover"
-                                    />
-                                </button>
-                            ))}
+                            {singleItem.images
+                                ?.slice(0, 4)
+                                .map((img, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setActiveImage(img)}
+                                        className={`aspect-square rounded-xl overflow-hidden border-2 transition-all bg-gray-50 ${
+                                            activeImage === img
+                                                ? "border-stone-900 opacity-100"
+                                                : "border-transparent opacity-70 hover:opacity-100"
+                                        }`}
+                                    >
+                                        <img
+                                            src={img}
+                                            alt={`Thumbnail ${index}`}
+                                            className="w-full h-full object-contain p-1"
+                                        />
+                                    </button>
+                                ))}
                         </div>
                     </motion.div>
 
@@ -134,7 +151,7 @@ export default function ProductDetails() {
                         <div>
                             <div className="flex justify-between items-start">
                                 <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 leading-tight mb-2">
-                                    {productData.title}
+                                    {singleItem.title}
                                 </h1>
                                 <button className="p-2 rounded-full hover:bg-gray-100 text-stone-400 hover:text-red-500 transition-colors">
                                     <LuHeart size={24} />
@@ -145,97 +162,36 @@ export default function ProductDetails() {
                                 <div className="flex items-center gap-1 text-orange-500">
                                     <LuStar fill="currentColor" />
                                     <span className="font-bold text-stone-900 ml-1">
-                                        {productData.rating}
+                                        {singleItem.rating}
                                     </span>
                                 </div>
                                 <span className="text-stone-300">|</span>
                                 <span className="text-stone-500 text-sm">
-                                    {productData.reviews} Reviews
+                                    128 Reviews{" "}
+                                    {/* Static count as API lacks it */}
                                 </span>
                             </div>
 
                             <div className="flex items-end gap-3">
                                 <span className="text-3xl font-bold text-stone-900">
-                                    ${productData.price}
+                                    ${singleItem.price}
                                 </span>
-                                <span className="text-lg text-stone-400 line-through mb-1">
-                                    ${productData.oldPrice}
-                                </span>
-                                <span className="text-orange-500 text-sm font-bold bg-orange-100 px-2 py-1 rounded mb-1">
-                                    20% OFF
-                                </span>
+                                {singleItem.discountPercentage > 0 && (
+                                    <span className="text-orange-500 text-sm font-bold bg-orange-100 px-2 py-1 rounded mb-1">
+                                        {Math.round(
+                                            singleItem.discountPercentage
+                                        )}
+                                        % OFF
+                                    </span>
+                                )}
                             </div>
                         </div>
 
-                        {/* Divider */}
                         <hr className="border-stone-100" />
 
-                        {/* Description */}
                         <p className="text-stone-500 leading-relaxed">
-                            {productData.description}
+                            {singleItem.description}
                         </p>
-
-                        {/* Selectors */}
-                        <div className="space-y-6">
-                            {/* Color Selector */}
-                            <div>
-                                <span className="text-sm font-bold text-stone-900 uppercase block mb-3">
-                                    Color: {selectedColor.name}
-                                </span>
-                                <div className="flex gap-3">
-                                    {productData.colors.map((color) => (
-                                        <button
-                                            key={color.name}
-                                            onClick={() =>
-                                                setSelectedColor(color)
-                                            }
-                                            className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
-                                                selectedColor.name ===
-                                                color.name
-                                                    ? "border-stone-900 scale-110"
-                                                    : "border-transparent hover:scale-110"
-                                            }`}
-                                        >
-                                            <span
-                                                className="w-8 h-8 rounded-full shadow-sm border border-black/10"
-                                                style={{
-                                                    backgroundColor: color.code,
-                                                }}
-                                            ></span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Size Selector */}
-                            <div>
-                                <div className="flex justify-between mb-3">
-                                    <span className="text-sm font-bold text-stone-900 uppercase">
-                                        Size: {selectedSize}
-                                    </span>
-                                    <button className="text-xs text-stone-500 underline hover:text-orange-500">
-                                        Size Guide
-                                    </button>
-                                </div>
-                                <div className="grid grid-cols-5 gap-2">
-                                    {productData.sizes.map((size) => (
-                                        <button
-                                            key={size}
-                                            onClick={() =>
-                                                setSelectedSize(size)
-                                            }
-                                            className={`py-3 rounded-lg text-sm font-bold transition-all border ${
-                                                selectedSize === size
-                                                    ? "bg-stone-900 text-white border-stone-900 shadow-lg"
-                                                    : "bg-white text-stone-600 border-stone-200 hover:border-stone-900"
-                                            }`}
-                                        >
-                                            {size}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row gap-4 mt-4">
@@ -245,7 +201,7 @@ export default function ProductDetails() {
                                     onClick={() =>
                                         setQuantity((q) => Math.max(1, q - 1))
                                     }
-                                    className="p-1 hover:text-orange-500 transition-colors"
+                                    className="p-1 hover:text-orange-500 transition-colors cursor-pointer"
                                 >
                                     <LuMinus />
                                 </button>
@@ -254,14 +210,14 @@ export default function ProductDetails() {
                                 </span>
                                 <button
                                     onClick={() => setQuantity((q) => q + 1)}
-                                    className="p-1 hover:text-orange-500 transition-colors"
+                                    className="p-1 hover:text-orange-500 transition-colors cursor-pointer"
                                 >
                                     <LuPlus />
                                 </button>
                             </div>
 
                             {/* Add to Cart */}
-                            <button className="flex-1 bg-stone-900 text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:bg-orange-500 transition-all shadow-xl active:scale-95">
+                            <button className="flex-1 bg-stone-900 text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:bg-orange-500 transition-all shadow-xl active:scale-95 cursor-pointer">
                                 <LuShoppingCart size={20} /> Add to Cart
                             </button>
                         </div>

@@ -1,8 +1,9 @@
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
+    
     if (totalPages <= 1) return null;
-
+    
     // Calculate visible page numbers based on current page
     const getPageNumbers = () => {
         const maxVisible = window.innerWidth < 640 ? 3 : 5; // Mobile: 3 pages, Desktop: 5 pages
