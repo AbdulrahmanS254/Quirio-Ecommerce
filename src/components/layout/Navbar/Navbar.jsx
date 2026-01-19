@@ -34,6 +34,11 @@ export default function Navbar() {
                     <div className="links hidden md:flex items-center">
                         <ul className="list-none flex gap-5">
                             <li>
+                                <NavLink to={"/"} className={linkClass}>
+                                    Home
+                                </NavLink>
+                            </li>
+                            <li>
                                 <NavLink to={"/products"} className={linkClass}>
                                     Products
                                 </NavLink>
