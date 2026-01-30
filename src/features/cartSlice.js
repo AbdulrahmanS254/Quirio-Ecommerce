@@ -22,5 +22,9 @@ const cartSlice = createSlice({
                 (item) => item.id === newItem.id,
             );
         },
+        removeFromCart: (state, action) => {},
+        increaseQuantity: (state, action) => {},
+        decreaseQuantity: (state, action) => {},
+        clearCart: (state) => {},
     },
 });
