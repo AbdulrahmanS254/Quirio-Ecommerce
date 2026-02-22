@@ -21,10 +21,69 @@ const cartSlice = createSlice({
             const existingItem = state.cartItems.find(
                 (item) => item.id === newItem.id,
             );
+
+            if (existingItem) {
+                existingItem.quantity += newItem.quantity || 1;
+            } else {
+                state.cartItems.push({ ...newItem, quantity: 1 });
+            }
+
+            localStorage.setItem(
+                "quirio_cart",
+                JSON.stringify(state.cartItems),
+            );
         },
-        removeFromCart: (state, action) => {},
-        increaseQuantity: (state, action) => {},
-        decreaseQuantity: (state, action) => {},
-        clearCart: (state) => {},
+        removeFromCart: (state, action) => {
+            const itemId = action.payload;
+
+            state.cartItems = state.cartItems.filter(
+                (item) => item.id === itemId,
+            );
+
+            localStorage.setItem(
+                "quirio_cart",
+                JSON.stringify(state.cartItems),
+            );
+        },
+        increaseQuantity: (state, action) => {
+            const itemId = action.payload;
+
+            const existingItem = state.cartItems.find(
+                (item) => item.id === itemId,
+            );
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+
+                localStorage.setItem(
+                    "quirio_cart",
+                    JSON.stringify(state.cartItems),
+                );
+            }
+        },
+        decreaseQuantity: (state, action) => {
+            const itemId = action.payload;
+
+            const existingItem = state.cartItems.find(
+                (item) => item.id === itemId,
+            );
+
+            if (existingItem && existingItem.quantity > 1) {
+                existingItem.quantity -= 1;
+
+                localStorage.setItem(
+                    "quirio_cart",
+                    JSON.stringify(state.cartItems),
+                );
+            }
+        },
+        clearCart: (state) => {
+            state.cartItems = [];
+            state.totalQuantity = 0;
+            state.totalPrice = 0;
+
+            // clear the local storage
+            localStorage.removeItem("quirio_cart");
+        },
     },
 });
