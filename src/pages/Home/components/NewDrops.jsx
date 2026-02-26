@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { motion } from "motion/react";
 import { fetchProducts } from "../../../features/productsSlice";
 import ProductCard from "../../../components/ui/ProductCard";
+import { addToCart } from "../../../features/cartSlice";
 
 // Animation Variants
 const titleVariants = {
@@ -66,6 +67,17 @@ export default function NewDrops() {
                             thumb={item.thumbnail}
                             desc={item.description}
                             price={item.price}
+                            onAddToCart={() =>
+                                dispatch(
+                                    addToCart({
+                                        id: item.id,
+                                        title: item.title,
+                                        price: item.price,
+                                        thumbnail: item.thumbnail,
+                                        quantity: 1,
+                                    }),
+                                )
+                            }
                         />
                     ))}
                 </motion.div>

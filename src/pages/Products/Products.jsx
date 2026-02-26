@@ -9,6 +9,7 @@ import FilterSideBar from "./components/FilterSideBar";
 import ProductCard from "../../components/ui/ProductCard";
 import { containerVariants, cardAnim } from "../../motion/animation";
 import Pagination from "../../components/ui/Pagination";
+import { addToCart } from "../../features/cartSlice";
 
 // Categories Data
 const categories = [
@@ -105,6 +106,17 @@ export default function Products() {
                                     thumb={product.thumbnail}
                                     desc={product.description}
                                     price={product.price}
+                                    onAddToCart={() =>
+                                        dispatch(
+                                            addToCart({
+                                                id: product.id,
+                                                title: product.title,
+                                                price: product.price,
+                                                thumbnail: product.thumbnail,
+                                                quantity: 1,
+                                            }),
+                                        )
+                                    }
                                 />
                             </motion.div>
                         ))}

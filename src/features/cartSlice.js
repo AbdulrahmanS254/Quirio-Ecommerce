@@ -25,7 +25,10 @@ const cartSlice = createSlice({
             if (existingItem) {
                 existingItem.quantity += newItem.quantity || 1;
             } else {
-                state.cartItems.push({ ...newItem, quantity: 1 });
+                state.cartItems.push({
+                    ...newItem,
+                    quantity: newItem.quantity || 1,
+                });
             }
 
             localStorage.setItem(
@@ -37,7 +40,7 @@ const cartSlice = createSlice({
             const itemId = action.payload;
 
             state.cartItems = state.cartItems.filter(
-                (item) => item.id === itemId,
+                (item) => item.id !== itemId,
             );
 
             localStorage.setItem(
@@ -87,3 +90,13 @@ const cartSlice = createSlice({
         },
     },
 });
+
+export const {
+    addToCart,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    clearCart,
+} = cartSlice.actions;
+
+export default cartSlice.reducer;
