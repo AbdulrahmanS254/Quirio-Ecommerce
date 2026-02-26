@@ -1,48 +1,78 @@
-# 💎 Quirio Store (🚧 Work in Progress)
+# Quirio — Redux Toolkit Practice Project
 
-> **Current Status:** 🎨 Building UI & Component Structure.
-> **Next Step:** Implementing Redux Logic & API Integration.
-
-**Quirio** is a modern e-commerce dashboard currently under active development. The goal of this project is to build a scalable Single-Page Application (SPA) that demonstrates advanced proficiency in **React Architecture**, **Redux Toolkit**, and **Tailwind CSS v4**.
+A small e-commerce-style React app built to **practice and learn Redux Toolkit**. The app focuses on core RTK concepts: slices, async thunks, store setup, and using state in components—without auth or admin features.
 
 ---
 
-## 🎯 Project Roadmap
+## What This Project Covers
 
-This project is being built in phases:
+### Redux Toolkit concepts used
 
-- [x] **Phase 1: UI/UX & Layout** (Current Focus)
-    - Designing responsive components (Navbar, Sidebar, Hero).
-    - Setting up **Tailwind CSS v4**.
-    - Implementing **Framer Motion** animations.
-- [ ] **Phase 2: Routing & Architecture**
-    - Configuring React Router v6.
-    - Creating Protected Routes for Admin access.
-- [ ] **Phase 3: State Management (The Core)**
-    - Setting up **Redux Toolkit** for global state.
-    - Building Cart logic (Add/Remove/Calculate).
-    - Connecting to DummyJSON API for Auth & Products.
+- **`createSlice`** — Cart and products state with reducers and generated actions.
+- **`createAsyncThunk`** — Fetching products list and single product from the [DummyJSON](https://dummyjson.com) API; handles loading, success, and error.
+- **`configureStore`** — Single store with multiple slice reducers (`products`, `cart`).
+- **`useSelector`** — Reading from the store (cart items, cart count, products, single product, loading/error).
+- **`useDispatch`** — Dispatching actions (add to cart, remove, change quantity, fetch products).
+- **Persistence** — Cart slice syncs to `localStorage` so the cart survives refresh.
 
-## 🛠️ Tech Stack
+### App flow
 
-* **Core:** React.js (Vite)
-* **Styling:** Tailwind CSS v4 & Framer Motion
-* **State:** Redux Toolkit (Planned)
-* **Routing:** React Router DOM
-* **Icons:** React Icons
+1. **Home** — Landing with links into the app.
+2. **Products** — Paginated list from API; each product can be added to cart. Uses `fetchProducts` and async state (`status`, `error`).
+3. **Product details** — Single product by ID via `fetchProductById`; add to cart with quantity.
+4. **Cart** — List from Redux cart slice; update quantity, remove items; order summary (subtotal, tax). Navbar shows cart item count from the same slice.
 
-## 📂 Current Structure
+---
 
-The project follows a **Feature-First** architecture (Co-location):
+## Tech stack
+
+- **React** (Vite)
+- **Redux Toolkit** — state management
+- **React Router** — routing
+- **Tailwind CSS** — styling
+- **Motion** — animations
+- **Axios** — API calls (inside async thunks)
+- **React Icons** — UI icons
+
+---
+
+## Project structure (Redux-related)
+
+```
+src/
+├── app/
+│   └── store.js              # configureStore, root reducer (products + cart)
+├── features/
+│   ├── productsSlice.js       # createSlice + createAsyncThunk (fetch list, fetch by id)
+│   └── cartSlice.js          # createSlice, localStorage persistence
+├── pages/
+│   ├── Home/
+│   ├── Products/             # uses fetchProducts, useSelector for items/status/error
+│   ├── ProductDetails/       # uses fetchProductById, addToCart
+│   └── Cart/                 # uses cart slice (items, add/remove/quantity)
+└── components/
+    └── layout/Navbar/        # useSelector for cart count
+```
+
+---
+
+## Running the project
 
 ```bash
-src/
-├── components/          
-│   ├── layout/          # Layout (Navbar, Footer)
-│   ├── ui/              # Shared UI (buttons, cards, ...)
-│   └── ...
-├── pages/               # Application Pages
-│   ├── Home/            # Home page & its specific components
-│   ├── Admin/           # Admin dashboard views
-│   └── ...
-└── App.jsx              # Main Entry
+npm install
+npm run dev
+```
+
+Open the app, browse products, add to cart, and open the Cart page to see Redux state and persistence in action.
+
+---
+
+## Learning takeaways
+
+- **Slices** define state shape, reducers, and actions in one place.
+- **Async thunks** keep API logic and pending/fulfilled/rejected handling in the slice.
+- **Single store** with multiple reducers keeps products and cart separate but in one tree.
+- **Selectors** (`useSelector`) and **dispatch** (`useDispatch`) connect components to the store without prop drilling.
+- **Persistence** (e.g. cart in `localStorage`) can live inside reducers for a simple, predictable flow.
+
+Use this repo as a reference for how to structure a small RTK-based React app (slices, async data, and cart with persistence).

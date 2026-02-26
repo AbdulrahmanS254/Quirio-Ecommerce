@@ -11,9 +11,6 @@ import { createBrowserRouter, RouterProvider } from "react-router";
 import Home from "./pages/Home/Home.jsx";
 import Products from "./pages/Products/Products.jsx";
 import ProductDetails from "./pages/ProductDetails/ProductDetails.jsx";
-import Admin from "./pages/Admin/Admin.jsx";
-import Create from "./pages/Create/Create.jsx";
-import Login from "./pages/Login/Login.jsx";
 import Cart from "./pages/Cart/Cart.jsx";
 
 import "./index.css";
@@ -34,18 +31,6 @@ const router = createBrowserRouter([
             {
                 path: "/product/:id",
                 element: <ProductDetails />,
-            },
-            {
-                path: "/admin",
-                element: <Admin />,
-            },
-            {
-                path: "/login",
-                element: <Login />,
-            },
-            {
-                path: "/create",
-                element: <Create />,
             },
             {
                 path: "/cart",

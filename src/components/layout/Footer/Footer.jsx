@@ -47,7 +47,6 @@ export default function Footer() {
                             <FooterLink to="/">Home</FooterLink>
                             <FooterLink to="/products">All Products</FooterLink>
                             <FooterLink to="/cart">My Cart</FooterLink>
-                            <FooterLink to="/login">Login</FooterLink>
                         </ul>
                     </div>
 

@@ -23,12 +23,6 @@ export default function MobileSidebar({ open }) {
                                 <li>
                                     <NavLink to={"/products"}>Products</NavLink>
                                 </li>
-                                <li>
-                                    <NavLink to={"/admin"}>Admin</NavLink>
-                                </li>
-                                <li>
-                                    <NavLink to={"/create"}>Create</NavLink>
-                                </li>
                             </ul>
                         </div>
                     </div>

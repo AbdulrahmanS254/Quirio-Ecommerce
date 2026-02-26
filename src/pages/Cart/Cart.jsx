@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { Link } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
 import {
     LuTrash2,
     LuMinus,
@@ -7,30 +8,23 @@ import {
     LuArrowRight,
     LuShoppingBag,
 } from "react-icons/lu";
-
-// Mock Data (عشان نتخيل الشكل لحد ما نركب Redux)
-const cartItems = [
-    {
-        id: 1,
-        title: "Shadow Drip Hoodie",
-        price: 99,
-        image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        category: "Hoodies",
-        quantity: 1,
-    },
-    {
-        id: 2,
-        title: "Urban Cargo Pants",
-        price: 85,
-        image: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=997&auto=format&fit=crop",
-        category: "Pants",
-        quantity: 2,
-    },
-];
+import {
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+} from "../../features/cartSlice";
 
 export default function Cart() {
-    // حالة العربة فارغة (للتجربة غير الرقم ده لـ 0)
+    const dispatch = useDispatch();
+    const cartItems = useSelector((state) => state.cart.cartItems);
     const isEmpty = cartItems.length === 0;
+
+    const subtotal = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0,
+    );
+    const tax = subtotal * 0.05;
+    const total = subtotal + tax;
 
     if (isEmpty) return <EmptyCartState />;
 
@@ -58,7 +52,7 @@ export default function Cart() {
                                 {/* Image */}
                                 <div className="w-full sm:w-32 h-60 sm:h-32 bg-gray-100 rounded-xl overflow-hidden shrink-0">
                                     <img
-                                        src={item.image}
+                                        src={item.thumbnail || item.image}
                                         alt={item.title}
                                         className="w-full h-full object-cover"
                                     />
@@ -68,14 +62,23 @@ export default function Cart() {
                                 <div className="flex-1 flex flex-col justify-between">
                                     <div className="flex justify-between items-start">
                                         <div>
-                                            <p className="text-stone-400 text-xs font-bold uppercase">
-                                                {item.category}
-                                            </p>
+                                            {item.category && (
+                                                <p className="text-stone-400 text-xs font-bold uppercase">
+                                                    {item.category}
+                                                </p>
+                                            )}
                                             <h3 className="text-lg font-bold text-stone-900">
                                                 {item.title}
                                             </h3>
                                         </div>
-                                        <button className="text-stone-400 hover:text-red-500 transition-colors p-2">
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                dispatch(removeFromCart(item.id))
+                                            }
+                                            className="text-stone-400 hover:text-red-500 transition-colors p-2"
+                                            aria-label="Remove from cart"
+                                        >
                                             <LuTrash2 size={20} />
                                         </button>
                                     </div>
@@ -83,20 +86,38 @@ export default function Cart() {
                                     <div className="flex justify-between items-end mt-4 sm:mt-0">
                                         {/* Quantity Controls */}
                                         <div className="flex items-center gap-3 bg-gray-50 rounded-lg p-1 border border-stone-200">
-                                            <button className="w-8 h-8 flex items-center justify-center text-stone-500 hover:bg-white hover:shadow-sm rounded-md transition-all">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    dispatch(
+                                                        decreaseQuantity(item.id),
+                                                    )
+                                                }
+                                                className="w-8 h-8 flex items-center justify-center text-stone-500 hover:bg-white hover:shadow-sm rounded-md transition-all"
+                                                aria-label="Decrease quantity"
+                                            >
                                                 <LuMinus size={14} />
                                             </button>
                                             <span className="font-bold text-sm w-4 text-center">
                                                 {item.quantity}
                                             </span>
-                                            <button className="w-8 h-8 flex items-center justify-center text-stone-500 hover:bg-white hover:shadow-sm rounded-md transition-all">
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    dispatch(
+                                                        increaseQuantity(item.id),
+                                                    )
+                                                }
+                                                className="w-8 h-8 flex items-center justify-center text-stone-500 hover:bg-white hover:shadow-sm rounded-md transition-all"
+                                                aria-label="Increase quantity"
+                                            >
                                                 <LuPlus size={14} />
                                             </button>
                                         </div>
 
                                         {/* Price */}
                                         <p className="text-xl font-bold text-stone-900">
-                                            ${item.price * item.quantity}
+                                            ${(item.price * item.quantity).toFixed(2)}
                                         </p>
                                     </div>
                                 </div>
@@ -115,7 +136,7 @@ export default function Cart() {
                                 <div className="flex justify-between">
                                     <span>Subtotal</span>
                                     <span className="text-white font-bold">
-                                        $269.00
+                                        ${subtotal.toFixed(2)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between">
@@ -127,14 +148,14 @@ export default function Cart() {
                                 <div className="flex justify-between">
                                     <span>Tax (Estimated)</span>
                                     <span className="text-white font-bold">
-                                        $12.00
+                                        ${tax.toFixed(2)}
                                     </span>
                                 </div>
                                 <div className="border-t border-stone-700 my-2"></div>
                                 <div className="flex justify-between text-lg text-white font-bold">
                                     <span>Total</span>
                                     <span className="text-orange-500">
-                                        $281.00
+                                        ${total.toFixed(2)}
                                     </span>
                                 </div>
                             </div>

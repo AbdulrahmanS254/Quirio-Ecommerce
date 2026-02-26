@@ -6,12 +6,15 @@ import { navVariants } from "../../../motion/animation";
 import { NavLink } from "react-router";
 import { LuShoppingCart } from "react-icons/lu";
 import { FaBars } from "react-icons/fa6";
+import { useSelector } from "react-redux";
 
 const linkClass =
     "px-3 py-2 rounded-3xl transition-all duration-300 ease-in-out hover:bg-white hover:text-orange-500 font-semibold";
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+    const cartItems = useSelector((state) => state.cart.cartItems);
+    const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
         <>
@@ -43,33 +46,20 @@ export default function Navbar() {
                                     Products
                                 </NavLink>
                             </li>
-                            <li>
-                                <NavLink to={"/admin"} className={linkClass}>
-                                    Admin
-                                </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={"/create"} className={linkClass}>
-                                    Create
-                                </NavLink>
-                            </li>
                         </ul>
                     </div>
                     {/* icons */}
                     <div className="flex items-center ms-auto me-4 md:m-0 gap-2">
                         <NavLink
                             to={"/cart"}
-                            className="text-2xl rounded-full p-2 hover:bg-orange-500 transition duration-300"
+                            className="relative text-2xl rounded-full p-2 hover:bg-orange-500 transition duration-300"
                         >
                             <LuShoppingCart />
-                        </NavLink>
-                        <NavLink
-                            to={"/login"}
-                            className={
-                                "font-semibold bg-white text-stone-900 px-3 py-2 rounded-3xl hover:text-orange-500 transition duration-300"
-                            }
-                        >
-                            Login
+                            {cartCount > 0 && (
+                                <span className="absolute -top-0.5 -right-0.5 min-w-5 h-5 px-1 flex items-center justify-center bg-orange-500 text-white text-xs font-bold rounded-full">
+                                    {cartCount > 99 ? "99+" : cartCount}
+                                </span>
+                            )}
                         </NavLink>
                     </div>
                     {/* Mobile Menu */}
