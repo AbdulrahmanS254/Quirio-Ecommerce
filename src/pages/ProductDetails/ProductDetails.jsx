@@ -19,6 +19,7 @@ import {
 } from "../../features/productsSlice";
 import Loading from "../../components/layout/Loading";
 import ErrorDisplay from "../../components/layout/ErrorDisplay";
+import { addToCart } from "../../features/cartSlice";
 
 // Constants for static data not provided by API
 
@@ -32,7 +33,7 @@ export default function ProductDetails() {
     const dispatch = useDispatch();
 
     const { singleItem, itemStatus, itemError } = useSelector(
-        (state) => state.products
+        (state) => state.products,
     );
 
     // Local State
@@ -70,6 +71,20 @@ export default function ProductDetails() {
 
     // Guard clause if data is missing
     if (!singleItem) return null;
+
+    const handleAddToCart = () => {
+        const productToAdd = {
+            id: singleItem.id,
+            title: singleItem.title,
+            price: singleItem.price,
+            thumbnail: activeImage || singleItem.thumbnail,
+            quantity: quantity,
+        };
+
+        dispatch(addToCart(productToAdd));
+
+        setQuantity(1);
+    };
 
     return (
         <section className="min-h-screen bg-white py-10 pb-20">
@@ -179,7 +194,7 @@ export default function ProductDetails() {
                                 {singleItem.discountPercentage > 0 && (
                                     <span className="text-orange-500 text-sm font-bold bg-orange-100 px-2 py-1 rounded mb-1">
                                         {Math.round(
-                                            singleItem.discountPercentage
+                                            singleItem.discountPercentage,
                                         )}
                                         % OFF
                                     </span>
@@ -217,7 +232,9 @@ export default function ProductDetails() {
                             </div>
 
                             {/* Add to Cart */}
-                            <button className="flex-1 bg-stone-900 text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:bg-orange-500 transition-all shadow-xl active:scale-95 cursor-pointer">
+                            <button 
+                            onClick={handleAddToCart}
+                            className="flex-1 bg-stone-900 text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:bg-orange-500 transition-all shadow-xl active:scale-95 cursor-pointer">
                                 <LuShoppingCart size={20} /> Add to Cart
                             </button>
                         </div>
